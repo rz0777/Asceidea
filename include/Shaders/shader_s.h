@@ -1,5 +1,5 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef SHADER_S
+#define SHADER_S
 
 #include <glad/glad.h>
 
@@ -22,8 +22,7 @@ public:
         std::ifstream vShaderFile;
         std::ifstream fShaderFile;
         // ensure ifstream objects can throw exceptions:
-        vShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-        fShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+        
         try 
         {
             // open files
@@ -39,9 +38,23 @@ public:
             // convert stream into string
             vertexCode   = vShaderStream.str();
             fragmentCode = fShaderStream.str();
+
+            if (!vShaderFile) {
+            std::cerr << "ERROR: Vertex shader file not found!\n";
+        }
+            if (!fShaderFile) {
+            std::cerr << "ERROR: Fragment shader file not found!\n";
+        }
+
+            std::cout << "Vertex Shader Code:\n" << vertexCode << "\n\n";
+            std::cout << "Fragment Shader Code:\n" << fragmentCode << "\n\n";
+            std::cout << "Vertex Shader PATH:\n" << vertexPath << "\n\n";
+            std::cout << "Fragment Shader PATH:\n" << fragmentPath << "\n\n";
         }
         catch (std::ifstream::failure& e)
         {
+            std::cout << "Trying to load shader: " << vertexPath << std::endl;
+            std::cout << "Trying to load shader: " << fragmentPath << std::endl;
             std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
         }
         const char* vShaderCode = vertexCode.c_str();
@@ -98,6 +111,8 @@ private:
     {
         int success;
         char infoLog[1024];
+
+
         if (type != "PROGRAM")
         {
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
